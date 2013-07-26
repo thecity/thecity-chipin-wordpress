@@ -1,0 +1,49 @@
+= The City Chipin WordPress Plugin
+
+A WordPress plugin that allows users to create campaign giving assigned to registry items.
+
+
+== Requirements
+WordPress / PHP
+
+
+== Installation
+
+Install from within WordPress:
+
+Go to Plugins => Add New => search for "the city chipin".
+
+
+Install manually:
+
+1. Unzip the file you downloaded.
+2. Upload files to a 'the-city-chipin' folder in the '/wp-content/plugins/' directory.
+3. Log into your Wordpress admin and activate the plugin through the 'Plugins' menu.
+4. In the widgets screen drag the widget to the content section you want it to show up in.
+5. Set the fields as shown and then save.
+
+
+
+== Screenshots
+
+Here is the link to the description of the plugin:
+http://developer.onthecity.org/thecity-plugins/wordpress-chipin/
+
+
+== Contributors
+
+David Beck: https://github.com/davbeck
+
+
+== Contributing
+
+If you want to help out fork the project and send me a pull request.  
+
+You can also send me feature requests by creating a ticket
+(https://github.com/thecity/thecity-chipin-wordpress/issues)
+
+
+== License
+
+This plugin is released under the MIT license. Please contact weshays
+(http://github.com/weshays) for any questions.
