@@ -1,0 +1,3 @@
+[submodule "lib/chipin"]
+	path = lib/chipin
+	url = https://github.com/thecity/thecity-chipin-php.git
