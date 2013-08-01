@@ -22,8 +22,7 @@ class The_City_Chipin_Widget extends WP_Widget {
 
   function form($instance) {
     /* Set up some default widget settings. */
-		$defaults = array( 'subdomain_key' => '', 
-                       'chipin_display_choice' => '');
+		$defaults = array( 'chipin_display_choice' => '');
 
 		$instance = wp_parse_args( (array) $instance, $defaults );    
 
@@ -36,7 +35,23 @@ class The_City_Chipin_Widget extends WP_Widget {
     $suggested_amount = strip_tags($instance['suggested_amount']);
     $designation = strip_tags($instance['designation']);
 
+
+    $load_campus_data = (!empty($secret_key) && !empty($user_token));
+
+    $chipin_widget_id = strip_tags($instance['chipin_widget_id']);
+    if(empty($chipin_widget_id) && !empty($user_token)) { $chipin_widget_id = intval(microtime(true)); }    
+
     ?>
+
+    <p>
+      <label for="<?php echo $this->get_field_id('chipin_widget_id'); ?>">
+        Chipin ID: <?php echo $chipin_widget_id; ?>
+        <input type="hidden" 
+               id="<?php echo $this->get_field_id('chipin_widget_id'); ?>"  
+               name="<?php echo $this->get_field_name('chipin_widget_id'); ?>" 
+               value="<?php echo $chipin_widget_id; ?>">        
+      </label>
+    </p>
 
     <p>
       <label for="<?php echo $this->get_field_id('secret_key'); ?>">
@@ -99,11 +114,16 @@ class The_City_Chipin_Widget extends WP_Widget {
         Church/Campus:              
         <select class="widefat" 
                 id="<?php echo $this->get_field_id('campus_id'); ?>" 
-                name="<?php echo $this->get_field_name('campus_id'); ?>">
-            <option value="1">Sparks</option>
-            <option value="2">Reno</option>
+                name="<?php echo $this->get_field_name('campus_id'); ?>"
+                data="city_campuses-<?php echo $chipin_widget_id; ?>">
+          <option value="0">Enter Key/Token above and save to load</option>
         </select>
       </label>    
+      <?php if($load_campus_data) { ?>
+        <script type="text/javascript">
+           load_city_campus_options(<?php echo $chipin_widget_id; ?>, <?php echo $campus_id ?>);
+        </script>
+      <?php } ?>
     </p>    
 
 
@@ -112,9 +132,9 @@ class The_City_Chipin_Widget extends WP_Widget {
         Fund:              
         <select class="widefat" 
                 id="<?php echo $this->get_field_id('fund_id'); ?>" 
-                name="<?php echo $this->get_field_name('fund_id'); ?>">
-            <option value="1">Expansion 2013</option>
-            <option value="2">Expansion 2013</option>
+                name="<?php echo $this->get_field_name('fund_id'); ?>"
+                data="city_funds-<?php echo $chipin_widget_id; ?>">
+            <option value="0">Select Church/Campus above</option>
         </select>
       </label>    
     </p>        
@@ -149,10 +169,12 @@ class The_City_Chipin_Widget extends WP_Widget {
 
     <?php
   }
-  
+
 
   function update($new_instance, $old_instance) {
     $instance = $old_instance;
+    $instance['chipin_widget_id'] = strip_tags($new_instance['chipin_widget_id']);
+
     $instance['secret_key'] = strip_tags($new_instance['secret_key']);
     $instance['user_token'] = strip_tags($new_instance['user_token']);
     $instance['chipin_display_choice'] = strip_tags($new_instance['chipin_display_choice']);
@@ -169,6 +191,8 @@ class The_City_Chipin_Widget extends WP_Widget {
 
   function widget($args, $instance) {
     extract($args);
+    $chipin_widget_id = empty($instance['chipin_widget_id']) ? '' : $instance['chipin_widget_id'];
+
     $secret_key = empty($instance['secret_key']) ? ' ' : $instance['secret_key'];
     $user_token = empty($instance['user_token']) ? ' ' : $instance['user_token'];
     $chipin_display_choice = empty($instance['chipin_display_choice']) ? 'plain' : $instance['chipin_display_choice'];
@@ -178,7 +202,6 @@ class The_City_Chipin_Widget extends WP_Widget {
     $suggested_amount = empty($instance['suggested_amount']) ? ' ' : $instance['suggested_amount'];
     $designation = empty($instance['designation']) ? ' ' : $instance['designation'];
 
-$title = 'Dog';
     echo $before_widget;
     if (!empty( $title )) {
         echo $before_title . $title . $after_title;

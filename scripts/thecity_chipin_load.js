@@ -1,13 +1,30 @@
 jQuery(function() {  
-  var subdomain = jQuery("#thecity_login").attr("subdomain");
-  var display_style = jQuery("#thecity_login").attr("class");
-  var show_remember_me = jQuery("#thecity_login").attr("show_remember_me") == "1";
-  var use_placeholder_text = jQuery("#thecity_login").attr("use_placeholder_text") == "1";
-  
-  if( !(!subdomain || /^\s*$/.test(subdomain)) ) {
-    TheCityLogin.start({"subdomain" : subdomain, 
-                        "display_style" : display_style,
-                        "show_remember_me" : show_remember_me, 
-                        "use_placeholder_text" : use_placeholder_text});
-  }
+
 });
+
+function load_city_campus_options(selected_id) {
+  var url = window.location.protocol + '//' + window.location.host + '/wp-content/plugins/the-city-chipin/city_proxy.php?load=campuses';
+  console.log("URL: " + url);
+  console.log("Selected: " + selected_id);
+
+  jQuery.get('/wp-content/plugins/the-city-chipin/city_proxy.php?load=campuses', function(data) {
+    var json_data = jQuery.parseJSON(data);
+    jQuery.each(json_data['campuses'], function(index, campus) {
+      console.log(campus['name']);
+    });
+  });  
+}
+
+
+function load_city_fund_options(campus_id, selected_id) {
+  var url = window.location.protocol + '//' + window.location.host + '/wp-content/plugins/the-city-chipin/city_proxy.php?load=funds&campus_id=' + campus_id;
+  console.log("URL: " + url);
+  console.log("Selected: " + selected_id);
+
+  jQuery.get('/wp-content/plugins/the-city-chipin/city_proxy.php?load=campuses', function(data) {
+    var json_data = jQuery.parseJSON(data);
+    jQuery.each(json_data['campuses'], function(index, campus) {
+      console.log(campus['name']);
+    });
+  });  
+}
