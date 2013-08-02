@@ -35,7 +35,6 @@ class The_City_Chipin_Widget extends WP_Widget {
     $suggested_amount = strip_tags($instance['suggested_amount']);
     $designation = strip_tags($instance['designation']);
 
-
     $load_campus_data = (!empty($secret_key) && !empty($user_token));
 
     $chipin_widget_id = strip_tags($instance['chipin_widget_id']);
@@ -60,7 +59,8 @@ class The_City_Chipin_Widget extends WP_Widget {
               id="<?php echo $this->get_field_id('secret_key'); ?>" 
               name="<?php echo $this->get_field_name('secret_key'); ?>" 
               type="text" 
-              value="<?php echo attribute_escape($secret_key); ?>" />
+              value="<?php echo attribute_escape($secret_key); ?>" 
+              data="secret_key-<?php echo $chipin_widget_id; ?>" />
       </label>
     </p>
 
@@ -71,7 +71,8 @@ class The_City_Chipin_Widget extends WP_Widget {
               id="<?php echo $this->get_field_id('user_token'); ?>" 
               name="<?php echo $this->get_field_name('user_token'); ?>" 
               type="text" 
-              value="<?php echo attribute_escape($user_token); ?>" />
+              value="<?php echo attribute_escape($user_token); ?>" 
+              data="user_token-<?php echo $chipin_widget_id; ?>" />
       </label>
     </p>
 
@@ -121,7 +122,7 @@ class The_City_Chipin_Widget extends WP_Widget {
       </label>    
       <?php if($load_campus_data) { ?>
         <script type="text/javascript">
-           load_city_campus_options(<?php echo $chipin_widget_id; ?>, <?php echo $campus_id ?>);
+           load_city_campus_options('<?php echo $chipin_widget_id; ?>', '<?php echo $campus_id; ?>');
         </script>
       <?php } ?>
     </p>    
