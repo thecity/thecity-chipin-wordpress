@@ -35,6 +35,9 @@ class The_City_Chipin_Widget extends WP_Widget {
     $suggested_amount = strip_tags($instance['suggested_amount']);
     $designation = strip_tags($instance['designation']);
 
+    // Needed to show in widget title on admin side.
+    $title = strip_tags($instance['designation']);
+
     $load_campus_data = (!empty($secret_key) && !empty($user_token));
 
     $chipin_widget_id = strip_tags($instance['chipin_widget_id']);
@@ -42,15 +45,17 @@ class The_City_Chipin_Widget extends WP_Widget {
 
     ?>
 
-    <p>
-      <label for="<?php echo $this->get_field_id('chipin_widget_id'); ?>">
-        Chipin ID: <?php echo $chipin_widget_id; ?>
-        <input type="hidden" 
-               id="<?php echo $this->get_field_id('chipin_widget_id'); ?>"  
-               name="<?php echo $this->get_field_name('chipin_widget_id'); ?>" 
-               value="<?php echo $chipin_widget_id; ?>">        
-      </label>
-    </p>
+
+    <input type="hidden" 
+           id="<?php echo $this->get_field_id('chipin_widget_id'); ?>"  
+           name="<?php echo $this->get_field_name('chipin_widget_id'); ?>" 
+           value="<?php echo $chipin_widget_id; ?>"
+           class="chipin_widget_id">    
+
+    <input type="hidden"  
+           id="<?php echo $this->get_field_id('title'); ?>" 
+           name="<?php echo $this->get_field_name('title'); ?>" 
+           value="<?php echo attribute_escape($title) ?>">        
 
     <p>
       <label for="<?php echo $this->get_field_id('secret_key'); ?>">
@@ -116,13 +121,14 @@ class The_City_Chipin_Widget extends WP_Widget {
         <select class="widefat" 
                 id="<?php echo $this->get_field_id('campus_id'); ?>" 
                 name="<?php echo $this->get_field_name('campus_id'); ?>"
-                data="city_campuses-<?php echo $chipin_widget_id; ?>">
+                data="city_campuses-<?php echo $chipin_widget_id; ?>"
+                onchange="load_city_fund_options_for_campus_change(jQuery(this))">
           <option value="0">Enter Key/Token above and save to load</option>
         </select>
       </label>    
       <?php if($load_campus_data) { ?>
         <script type="text/javascript">
-           load_city_campus_options('<?php echo $chipin_widget_id; ?>', '<?php echo $campus_id; ?>');
+           load_city_campus_options('<?php echo $chipin_widget_id; ?>', '<?php echo $campus_id; ?>', '<?php echo $fund_id; ?>');
         </script>
       <?php } ?>
     </p>    
@@ -185,6 +191,9 @@ class The_City_Chipin_Widget extends WP_Widget {
     $instance['suggested_amount'] = strip_tags($new_instance['suggested_amount']);
     $instance['designation'] = strip_tags($new_instance['designation']);
 
+    // Used to title the widget on the admin side.
+    //$instance['title'] = strip_tags($new_instance['designation']);
+
     return $instance;
   }
   
@@ -203,13 +212,15 @@ class The_City_Chipin_Widget extends WP_Widget {
     $suggested_amount = empty($instance['suggested_amount']) ? ' ' : $instance['suggested_amount'];
     $designation = empty($instance['designation']) ? ' ' : $instance['designation'];
 
-    echo $before_widget;
-    if (!empty( $title )) {
-        echo $before_title . $title . $after_title;
-    };
+//    $title = empty($instance['designation']) ? ' ' : $instance['designation'];
 
-    include dirname(__FILE__).'/widget_info.php';
-    echo $after_widget;
+    // echo $before_widget;
+    // if (!empty( $title )) {
+    //     echo $before_title . $title . $after_title;
+    // };
+
+    // include dirname(__FILE__).'/widget_info.php';
+    // echo $after_widget;
   }
   
 }
