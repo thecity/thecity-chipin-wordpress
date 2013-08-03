@@ -73,3 +73,18 @@ function reset_city_funds_list(chipin_widget_id) {
   jQuery("[data='city_funds-"+chipin_widget_id+"'] option").remove();
   list.append(new Option('Enter Key/Token above and save to load', '0'));  
 }
+
+
+function load_info_for_widget(chipin_widget_id) {
+  var params = {
+    "load" : "info",
+    "chipin_widget_id" : chipin_widget_id
+  };
+
+  jQuery.post('/wp-content/plugins/the-city-chipin/city_proxy.php', params, function(data) {
+    var json_data = jQuery.parseJSON(data);
+    console.log(data);
+  });   
+}
+
+

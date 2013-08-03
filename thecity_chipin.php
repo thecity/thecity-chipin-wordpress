@@ -9,6 +9,7 @@ Author URI: http://www.OnTheCity.org
 */
 
 include_once 'thecity_chipin_scripts.php';
+require_once 'lib/chipin_wordpress_cache.php';  
 
 
 class The_City_Chipin_Widget extends WP_Widget {
@@ -22,9 +23,9 @@ class The_City_Chipin_Widget extends WP_Widget {
 
   function form($instance) {
     /* Set up some default widget settings. */
-		$defaults = array( 'chipin_display_choice' => '');
+    $defaults = array( 'chipin_display_choice' => '');
 
-		$instance = wp_parse_args( (array) $instance, $defaults );    
+    $instance = wp_parse_args( (array) $instance, $defaults );    
 
     $secret_key = strip_tags($instance['secret_key']);
     $user_token = strip_tags($instance['user_token']);
@@ -34,6 +35,9 @@ class The_City_Chipin_Widget extends WP_Widget {
     $fund_id = strip_tags($instance['fund_id']);
     $suggested_amount = strip_tags($instance['suggested_amount']);
     $designation = strip_tags($instance['designation']);
+
+    $start_date = strip_tags($instance['start_date']);
+    $end_date = strip_tags($instance['end_date']);
 
     // Needed to show in widget title on admin side.
     $title = strip_tags($instance['designation']);
@@ -102,12 +106,12 @@ class The_City_Chipin_Widget extends WP_Widget {
 
     <p>    
       <label for="<?php echo $this->get_field_id('chipin_display_choice'); ?>">
-        Display:        			
+        Display:              
         <select class="widefat" 
                 id="<?php echo $this->get_field_id('chipin_display_choice'); ?>" 
                 name="<?php echo $this->get_field_name('chipin_display_choice'); ?>">
             <option value="plain" <?php echo $plain_s; ?> >Plain</option>
-        		<option value="inline" <?php echo $inline_s; ?> >Inline</option>
+            <option value="inline" <?php echo $inline_s; ?> >Inline</option>
             <option value="city_style_normal" <?php echo $city_style_normal; ?> >City Style Normal</option>
             <option value="city_style_inline" <?php echo $city_style_inline; ?> >City Style Inline</option>
         </select>
@@ -173,6 +177,30 @@ class The_City_Chipin_Widget extends WP_Widget {
     </p>
 
 
+    <p>
+      <label for="<?php echo $this->get_field_id('start_date'); ?>">
+        Start Date: 
+        <input class="widefat" 
+              id="<?php echo $this->get_field_id('start_date'); ?>" 
+              name="<?php echo $this->get_field_name('start_date'); ?>" 
+              type="text" 
+              value="<?php echo attribute_escape($start_date); ?>" />
+      </label>
+      <i>Ex: "2013-03-15"</i>
+    </p>    
+
+
+    <p>
+      <label for="<?php echo $this->get_field_id('end_date'); ?>">
+        End Date (optional): 
+        <input class="widefat" 
+              id="<?php echo $this->get_field_id('end_date'); ?>" 
+              name="<?php echo $this->get_field_name('end_date'); ?>" 
+              type="text" 
+              value="<?php echo attribute_escape($end_date); ?>" />
+      </label>
+      <i>Ex: "2013-09-15"</i>
+    </p>        
 
     <?php
   }
@@ -191,8 +219,23 @@ class The_City_Chipin_Widget extends WP_Widget {
     $instance['suggested_amount'] = strip_tags($new_instance['suggested_amount']);
     $instance['designation'] = strip_tags($new_instance['designation']);
 
-    // Used to title the widget on the admin side.
-    //$instance['title'] = strip_tags($new_instance['designation']);
+    $instance['start_date'] = strip_tags($new_instance['start_date']);
+    $instance['end_date'] = strip_tags($new_instance['end_date']);
+
+
+    global $wpdb;
+    $cacher = new ChipinWordPressCache($wpdb);
+    $cacher->expire_cache($instance['chipin_widget_id']);
+    $data = array(
+      'secret_key'  => $instance['secret_key'],
+      'user_token'  => $instance['user_token'],
+      'campus_id'   => $instance['campus_id'],
+      'fund_id'     => $instance['fund_id'],
+      'designation' => $instance['designation'],
+      'start_date'  => $instance['start_date'],
+      'end_date'    => $instance['end_date']
+    );
+    $cacher->save_data($instance['chipin_widget_id'], $data);
 
     return $instance;
   }
@@ -212,15 +255,12 @@ class The_City_Chipin_Widget extends WP_Widget {
     $suggested_amount = empty($instance['suggested_amount']) ? ' ' : $instance['suggested_amount'];
     $designation = empty($instance['designation']) ? ' ' : $instance['designation'];
 
-//    $title = empty($instance['designation']) ? ' ' : $instance['designation'];
+    $start_date = empty($instance['start_date']) ? ' ' : $instance['start_date'];
+    $end_date = empty($instance['end_date']) ? ' ' : $instance['end_date'];    
 
-    // echo $before_widget;
-    // if (!empty( $title )) {
-    //     echo $before_title . $title . $after_title;
-    // };
-
-    // include dirname(__FILE__).'/widget_info.php';
-    // echo $after_widget;
+    echo $before_widget;
+    include dirname(__FILE__).'/widget_info.php';
+    echo $after_widget;
   }
   
 }
