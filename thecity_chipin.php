@@ -23,7 +23,7 @@ class The_City_Chipin_Widget extends WP_Widget {
 
   function form($instance) {
     /* Set up some default widget settings. */
-    $defaults = array( 'chipin_display_choice' => '');
+    $defaults = array( 'chipin_display_choice' => '3');
 
     $instance = wp_parse_args( (array) $instance, $defaults );    
 
@@ -32,8 +32,10 @@ class The_City_Chipin_Widget extends WP_Widget {
     $chipin_display_choice = strip_tags($instance['chipin_display_choice']);
 
     $campus_id = strip_tags($instance['campus_id']);
+    $campus_name = strip_tags($instance['campus_name']);
     $fund_id = strip_tags($instance['fund_id']);
     $suggested_amount = strip_tags($instance['suggested_amount']);
+    $goal_amount = strip_tags($instance['goal_amount']);
     $designation = strip_tags($instance['designation']);
 
     $start_date = strip_tags($instance['start_date']);
@@ -61,6 +63,12 @@ class The_City_Chipin_Widget extends WP_Widget {
            name="<?php echo $this->get_field_name('title'); ?>" 
            value="<?php echo attribute_escape($title) ?>">        
 
+    <input type="hidden"  
+           id="<?php echo $this->get_field_id('campus_name'); ?>" 
+           name="<?php echo $this->get_field_name('campus_name'); ?>" 
+           value="<?php echo attribute_escape($campus_name) ?>"
+           class="campus_name">                 
+
     <p>
       <label for="<?php echo $this->get_field_id('secret_key'); ?>">
         City Secret Key: 
@@ -87,19 +95,19 @@ class The_City_Chipin_Widget extends WP_Widget {
 
 
     <?php 
-      $plain_s = $inline_s = '';
+      $thecity_large_light = $thecity_large_dark = $thecity_small_light = $thecity_small_dark = '';
       switch($instance['chipin_display_choice']) {
-        case 'plain':
-          $plain_s = 'selected="selected"'; 
+        case '1':
+          $thecity_large_light = 'selected="selected"'; 
           break;
-        case 'inline':
-          $inline_s = 'selected="selected"'; 
+        case '2':
+          $thecity_large_dark = 'selected="selected"'; 
           break;
-        case 'city_style_normal':
-          $city_style_normal = 'selected="selected"'; 
+        case '3':
+          $thecity_small_light = 'selected="selected"'; 
           break;
-        case 'city_style_inline':
-          $city_style_inline = 'selected="selected"'; 
+        case '4':
+          $thecity_small_dark = 'selected="selected"'; 
           break;
       }
     ?> 
@@ -110,14 +118,13 @@ class The_City_Chipin_Widget extends WP_Widget {
         <select class="widefat" 
                 id="<?php echo $this->get_field_id('chipin_display_choice'); ?>" 
                 name="<?php echo $this->get_field_name('chipin_display_choice'); ?>">
-            <option value="plain" <?php echo $plain_s; ?> >Plain</option>
-            <option value="inline" <?php echo $inline_s; ?> >Inline</option>
-            <option value="city_style_normal" <?php echo $city_style_normal; ?> >City Style Normal</option>
-            <option value="city_style_inline" <?php echo $city_style_inline; ?> >City Style Inline</option>
+            <option value="1" <?php echo $thecity_large_light; ?> >TheCity Large / Light</option>
+            <option value="2" <?php echo $thecity_large_dark; ?> >TheCity Large / Dark</option>
+            <option value="3" <?php echo $thecity_small_light; ?> >TheCity Small / Light</option>
+            <option value="4" <?php echo $thecity_small_dark; ?> >TheCity Small / Dark</option>
         </select>
       </label>    
     </p>    
-
 
     <p>    
       <label for="<?php echo $this->get_field_id('campus_id'); ?>">
@@ -163,7 +170,6 @@ class The_City_Chipin_Widget extends WP_Widget {
       <i>Ex: "25" for "$25"</i>
     </p>
 
-
     <p>
       <label for="<?php echo $this->get_field_id('designation'); ?>">
         Designation: 
@@ -176,6 +182,18 @@ class The_City_Chipin_Widget extends WP_Widget {
       <i>Ex: "Chairs", Classrooms", etc.</i>
     </p>
 
+
+    <p>
+      <label for="<?php echo $this->get_field_id('goal_amount'); ?>">
+        Goal Amount: 
+        <input class="widefat" 
+              id="<?php echo $this->get_field_id('goal_amount'); ?>" 
+              name="<?php echo $this->get_field_name('goal_amount'); ?>" 
+              type="text" 
+              value="<?php echo attribute_escape($goal_amount); ?>" />
+      </label>
+      <i>Ex: "10000" for "$10,000"</i>
+    </p>
 
     <p>
       <label for="<?php echo $this->get_field_id('start_date'); ?>">
@@ -215,8 +233,10 @@ class The_City_Chipin_Widget extends WP_Widget {
     $instance['chipin_display_choice'] = strip_tags($new_instance['chipin_display_choice']);
 
     $instance['campus_id'] = strip_tags($new_instance['campus_id']);
+    $instance['campus_name'] = strip_tags($new_instance['campus_name']);
     $instance['fund_id'] = strip_tags($new_instance['fund_id']);
     $instance['suggested_amount'] = strip_tags($new_instance['suggested_amount']);
+    $instance['goal_amount'] = strip_tags($new_instance['goal_amount']);
     $instance['designation'] = strip_tags($new_instance['designation']);
 
     $instance['start_date'] = strip_tags($new_instance['start_date']);
@@ -227,13 +247,16 @@ class The_City_Chipin_Widget extends WP_Widget {
     $cacher = new ChipinWordPressCache($wpdb);
     $cacher->expire_cache($instance['chipin_widget_id']);
     $data = array(
-      'secret_key'  => $instance['secret_key'],
-      'user_token'  => $instance['user_token'],
-      'campus_id'   => $instance['campus_id'],
-      'fund_id'     => $instance['fund_id'],
-      'designation' => $instance['designation'],
-      'start_date'  => $instance['start_date'],
-      'end_date'    => $instance['end_date']
+      'secret_key'     => $instance['secret_key'],
+      'user_token'     => $instance['user_token'],
+      'display_choice' => $instance['chipin_display_choice'],
+      'campus_id'      => $instance['campus_id'],
+      'campus_name'    => $instance['campus_name'],
+      'fund_id'        => $instance['fund_id'],
+      'designation'    => $instance['designation'],
+      'start_date'     => $instance['start_date'],
+      'end_date'       => $instance['end_date'],
+      'goal_amount'    => $instance['goal_amount']
     );
     $cacher->save_data($instance['chipin_widget_id'], $data);
 
@@ -253,6 +276,7 @@ class The_City_Chipin_Widget extends WP_Widget {
     $campus_id = empty($instance['campus_id']) ? ' ' : $instance['campus_id'];
     $fund_id = empty($instance['fund_id']) ? ' ' : $instance['fund_id'];
     $suggested_amount = empty($instance['suggested_amount']) ? ' ' : $instance['suggested_amount'];
+    $goal_amount = empty($instance['goal_amount']) ? ' ' : $instance['goal_amount'];
     $designation = empty($instance['designation']) ? ' ' : $instance['designation'];
 
     $start_date = empty($instance['start_date']) ? ' ' : $instance['start_date'];
