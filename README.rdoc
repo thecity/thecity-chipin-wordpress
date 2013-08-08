@@ -33,6 +33,7 @@ http://developer.onthecity.org/thecity-plugins/wordpress-chipin/
 == Contributors
 
 David Beck: https://github.com/davbeck
+Dustin Secrest: https://github.com/dsecrest
 
 
 == Contributing
