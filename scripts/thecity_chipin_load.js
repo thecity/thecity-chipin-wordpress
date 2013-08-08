@@ -88,6 +88,7 @@ function load_info_for_widget(chipin_widget_id) {
     var designation = json_data["widget_info"]["designation"].toLowerCase();
     var total_amount_cents = json_data["totals"].hasOwnProperty(designation) ? json_data["totals"][designation] : 0;
     render_city_chipin_widget(chipin_widget_id, total_amount_cents, json_data["widget_info"]); 
+    fillInTestVars();
     calculate_percentage_raised();  
   });   
 }
@@ -123,38 +124,47 @@ function render_city_chipin_widget(chipin_widget_id, total_amount_cents, widget_
   } 
 
   jQuery("#city_chipin_widget-"+chipin_widget_id).html(
-    '<div class="'+css_classes+'">'+
-      '<h1 id="campaign-title" class="pledge-title">'+designation+'</h1>'+
-      '<p id="campaign-org-name" class="org-name">'+campus_name+'</p>'+
+    '<div class="'+css_classes+'"> '+
+      '<h1 id="campaign-title" class="pledge-title">'+designation+'</h1> '+
+      '<p id="campaign-org-name" class="org-name">'+campus_name+'</p> '+
 
-      '<div class="pledge-progress">'+
-        '<div class="progress-bar-wrapper">'+
-          '<div class="progress-bar-bg">'+
-            '<div id="campaign-progress-bar" class="progress-bar"></div>'+
+      '<div class="pledge-progress"> '+
+        '<div class="progress-bar-wrapper"> '+
+          '<div class="progress-bar-bg"> '+
+            '<div id="campaign-progress-bar" class="progress-bar"></div> '+
           '</div>'+
         '</div>'+
 
-        '<div class="progress-desc">'+
-          '<span class="pledge-zero hide-on-small">$0</span>'+
-          '<span id="campaign-pct-raised" class="pledge-pct-raised"></span>'+
-          '<span class="pledge-dollar-raised hide-on-small">or $<span id="campaign-dollar-amt-raised">'+raised_amount+'</span></span>'+
-          '<span class="hide-on-large">of</span>'+
-          '<span class="pledge-goal">$<span id="campaign-goal">'+goal_amount+'</span></span>'+
-          '<span class="hide-on-large">raised.</span>'+
-          '<span class="pledge-ending-date hide-on-small">ends <span id="campaign-end-date">'+end_date+'</span></span>'+
-        '</div>'+
-      '</div>'+
+        '<div class="progress-desc"> '+
+          '<span class="pledge-zero hide-on-small">$0</span> '+
+          '<span id="campaign-pct-raised" class="pledge-pct-raised"></span> '+
+          '<span class="pledge-dollar-raised"><span class="hide-on-small">or</span> $<span id="campaign-dollar-amt-raised">'+raised_amount+'</span></span> '+
+          '<span class="hide-on-large">of</span> '+
+          '<span class="pledge-goal">$<span id="campaign-goal">'+goal_amount+'</span></span> '+
+          '<span class="hide-on-large">raised.</span> '+
+          '<span class="pledge-ending-date hide-on-small">ends <span id="campaign-end-date">'+end_date+'</span></span> '+
+        '</div> '+
+      '</div> '+
 
-      '<div class="clearfix">'+
-        '<div class="pledge-action">'+
-          '<a href="#" class="pledge-button">Give now</a>'+
-        '</div>'+
-        '<div class="credits">'+
-          '<a href="http://www.onthecity.org" target="_blank" class="city-powered">powered by The City</a>'+
-        '</div>'+
-      '</div>'+
+      '<div class="clearfix"> '+
+        '<div class="pledge-action"> '+
+          '<a href="#" class="pledge-button">Give now</a> '+
+        '</div> '+
+        '<div class="credits"> '+
+          '<a href="http://www.onthecity.org" target="_blank" class="city-powered">powered by The City</a> '+
+        '</div> '+
+      '</div> '+
     '</div>'
   );
+}
+
+
+function fillInTestVars() {
+  jQuery("#campaign-title").text("Paving Paradise");
+  jQuery("#campaign-org-name").text("Big Church in Detroit");
+  jQuery("#campaign-goal").text(25000);
+  jQuery("#campaign-dollar-amt-raised").text(4500);
+  jQuery("#campaign-end-date").text("9/15/2013");
 }
 
 function calculate_percentage_raised() {
