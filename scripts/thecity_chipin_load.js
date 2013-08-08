@@ -1,7 +1,3 @@
-// jQuery(function() {  
-
-// });
-
 function load_city_campus_options(chipin_widget_id, selected_campus_id, selected_fund_id) {
   var params = {
     "api_key" : jQuery("[data='secret_key-"+chipin_widget_id+"']").val(),
@@ -88,14 +84,27 @@ function load_info_for_widget(chipin_widget_id) {
     var designation = json_data["widget_info"]["designation"].toLowerCase();
     var total_amount_cents = json_data["totals"].hasOwnProperty(designation) ? json_data["totals"][designation] : 0;
     render_city_chipin_widget(chipin_widget_id, total_amount_cents, json_data["widget_info"]); 
-    fillInTestVars();
     calculate_percentage_raised();  
   });   
 }
 
+function calculate_percentage_raised() {
+  goal = parseInt(jQuery("#campaign-goal").text(), 10);
+  current_amt = parseInt(jQuery("#campaign-dollar-amt-raised").text(), 10);
+  percent_raised = Math.round(current_amt * 100.0 / goal)
+  jQuery("#campaign-pct-raised").text(percent_raised + "%"); 
+  jQuery("#campaign-progress-bar").css("width", percent_raised + "%")
+}
+
+function convert_date_format(old_date) {
+  var d = old_date.split('-');
+  if(d.length != 3) return '';
+  return [d[1],'/',d[2],'/',d[0]].join('');
+}
+
+
 
 function render_city_chipin_widget(chipin_widget_id, total_amount_cents, widget_info) {
-  console.log(total_amount_cents);
   var raised_amount = parseInt(total_amount_cents, 10);
   var campus_name = widget_info["campus_name"];
   var designation = widget_info["designation"];
@@ -158,25 +167,3 @@ function render_city_chipin_widget(chipin_widget_id, total_amount_cents, widget_
   );
 }
 
-
-function fillInTestVars() {
-  jQuery("#campaign-title").text("Paving Paradise");
-  jQuery("#campaign-org-name").text("Big Church in Detroit");
-  jQuery("#campaign-goal").text(25000);
-  jQuery("#campaign-dollar-amt-raised").text(4500);
-  jQuery("#campaign-end-date").text("9/15/2013");
-}
-
-function calculate_percentage_raised() {
-  goal = parseInt(jQuery("#campaign-goal").text(), 10);
-  current_amt = parseInt(jQuery("#campaign-dollar-amt-raised").text(), 10);
-  percent_raised = Math.round(current_amt * 100.0 / goal)
-  jQuery("#campaign-pct-raised").text(percent_raised + "%"); 
-  jQuery("#campaign-progress-bar").css("width", percent_raised + "%")
-}
-
-function convert_date_format(old_date) {
-  var d = old_date.split('-');
-  if(d.length != 3) return '';
-  return [d[1],'/',d[2],'/',d[0]].join('');
-}
