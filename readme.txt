@@ -7,12 +7,12 @@ Stable tag: 0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-A WordPress plugin that allows users to create campaign giving assigned to a registry items using The City.  
+A WordPress plugin that allows users to create campaign giving assigned to a registry item using The City.  
 The widgets created will automatically update as the funds settle.
 
 == Description ==
 
-A WordPress plugin that allows users to create campaign giving assigned to a registry items using The City.  
+A WordPress plugin that allows users to create campaign giving assigned to a registry item using The City.  
 The widgets created will automatically update as the funds settle.
 
 == Installation ==
