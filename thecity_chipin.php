@@ -23,9 +23,14 @@ class The_City_Chipin_Widget extends WP_Widget {
 
   function form($instance) {
     /* Set up some default widget settings. */
-    $defaults = array( 'chipin_display_choice' => '3');
+    $defaults = array(
+      'subdomain_key' => '',
+      'chipin_display_choice' => '3'
+    );
 
     $instance = wp_parse_args( (array) $instance, $defaults );    
+
+    $subdomain_key = strip_tags($instance['subdomain_key']);
 
     $secret_key = strip_tags($instance['secret_key']);
     $user_token = strip_tags($instance['user_token']);
@@ -68,6 +73,19 @@ class The_City_Chipin_Widget extends WP_Widget {
            name="<?php echo $this->get_field_name('campus_name'); ?>" 
            value="<?php echo attribute_escape($campus_name) ?>"
            class="campus_name">                 
+
+
+   <p>
+     <label for="<?php echo $this->get_field_id('subdomain_key'); ?>">
+       Subdomain: 
+       <input class="widefat" 
+              id="<?php echo $this->get_field_id('subdomain_key'); ?>" 
+              name="<?php echo $this->get_field_name('subdomain_key'); ?>" 
+              type="text" 
+              value="<?php echo attribute_escape($subdomain_key); ?>" />
+      </label>
+      <i>Ex: https://[subdomain].OnTheCity.org</i>
+    </p>
 
     <p>
       <label for="<?php echo $this->get_field_id('secret_key'); ?>">
@@ -228,6 +246,8 @@ class The_City_Chipin_Widget extends WP_Widget {
     $instance = $old_instance;
     $instance['chipin_widget_id'] = strip_tags($new_instance['chipin_widget_id']);
 
+    $instance['subdomain_key'] = strip_tags($new_instance['subdomain_key']);
+
     $instance['secret_key'] = strip_tags($new_instance['secret_key']);
     $instance['user_token'] = strip_tags($new_instance['user_token']);
     $instance['chipin_display_choice'] = strip_tags($new_instance['chipin_display_choice']);
@@ -247,16 +267,18 @@ class The_City_Chipin_Widget extends WP_Widget {
     $cacher = new ChipinWordPressCache($wpdb);
     $cacher->expire_cache($instance['chipin_widget_id']);
     $data = array(
-      'secret_key'     => $instance['secret_key'],
-      'user_token'     => $instance['user_token'],
-      'display_choice' => $instance['chipin_display_choice'],
-      'campus_id'      => $instance['campus_id'],
-      'campus_name'    => $instance['campus_name'],
-      'fund_id'        => $instance['fund_id'],
-      'designation'    => $instance['designation'],
-      'start_date'     => $instance['start_date'],
-      'end_date'       => $instance['end_date'],
-      'goal_amount'    => $instance['goal_amount']
+      'subdomain_key'    => $instance['subdomain_key'],
+      'secret_key'       => $instance['secret_key'],
+      'user_token'       => $instance['user_token'],
+      'display_choice'   => $instance['chipin_display_choice'],
+      'campus_name'      => $instance['campus_name'],
+      'campus_id'        => $instance['campus_id'],
+      'fund_id'          => $instance['fund_id'],
+      'designation'      => $instance['designation'],
+      'suggested_amount' => $instance['suggested_amount'],
+      'start_date'       => $instance['start_date'],
+      'end_date'         => $instance['end_date'],
+      'goal_amount'      => $instance['goal_amount']
     );
     $cacher->save_data($instance['chipin_widget_id'], $data);
 
@@ -268,6 +290,8 @@ class The_City_Chipin_Widget extends WP_Widget {
   function widget($args, $instance) {
     extract($args);
     $chipin_widget_id = empty($instance['chipin_widget_id']) ? '' : $instance['chipin_widget_id'];
+
+    $subdomain_key = empty($instance['subdomain_key']) ? ' ' : $instance['subdomain_key'];
 
     $secret_key = empty($instance['secret_key']) ? ' ' : $instance['secret_key'];
     $user_token = empty($instance['user_token']) ? ' ' : $instance['user_token'];

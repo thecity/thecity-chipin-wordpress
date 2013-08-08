@@ -106,12 +106,25 @@ function convert_date_format(old_date) {
 
 function render_city_chipin_widget(chipin_widget_id, total_amount_cents, widget_info) {
   var raised_amount = parseInt(total_amount_cents, 10);
+
+  var subdomain_key = widget_info["subdomain_key"];
   var campus_name = widget_info["campus_name"];
+  var campus_id = widget_info["campus_id"];
+  var fund_id = widget_info["fund_id"];
   var designation = widget_info["designation"];
-  var start_date = widget_info["start_date"];
+  var suggested_amount = widget_info["suggested_amount"];
+  var start_date = widget_info["start_date"]; // not currently used
   var end_date = convert_date_format(widget_info["end_date"]);
   var goal_amount = parseInt(widget_info["goal_amount"], 10);
   var display_choice = parseInt(widget_info["display_choice"], 10);
+
+  var give_link = [
+    'http://', subdomain_key, '.onthecity.org/give?',
+    'campus_id=', campus_id,
+    '&fund_id=', fund_id,
+    '&memo=', designation,
+    '&suggested_amount=', suggested_amount
+  ].join('');
 
   var css_classes = "";
   switch (display_choice) {
@@ -157,7 +170,7 @@ function render_city_chipin_widget(chipin_widget_id, total_amount_cents, widget_
 
       '<div class="clearfix"> '+
         '<div class="pledge-action"> '+
-          '<a href="#" class="pledge-button">Give now</a> '+
+          '<a href="'+give_link+'" class="pledge-button">Give now</a> '+
         '</div> '+
         '<div class="credits"> '+
           '<a href="http://www.onthecity.org" target="_blank" class="city-powered">powered by The City</a> '+

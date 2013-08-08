@@ -34,12 +34,16 @@
         $chipin->donations($white_list);
         $html['totals'] = $chipin->designation_totals();
         $html['widget_info'] = array(
-          'campus_name'    => $data['campus_name'],
-          'designation'    => $data['designation'],
-          'display_choice' => $data['display_choice'],
-          'start_date'     => $data['start_date'],
-          'end_date'       => $data['end_date'],
-          'goal_amount'    => $data['goal_amount'],
+          'subdomain_key'    => $data['subdomain_key'],
+          'campus_name'      => $data['campus_name'],
+          'campus_id'        => $data['campus_id'],
+          'fund_id'          => $data['fund_id'],
+          'designation'      => $data['designation'],
+          'suggested_amount' => $data['suggested_amount'],
+          'display_choice'   => $data['display_choice'],
+          'start_date'       => $data['start_date'],
+          'end_date'         => $data['end_date'],
+          'goal_amount'      => $data['goal_amount']
         );      
       }
       break;
