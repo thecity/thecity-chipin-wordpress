@@ -8,8 +8,10 @@ Version: 0.1
 Author URI: http://www.OnTheCity.org
 */
 
+
 include_once 'thecity_chipin_scripts.php';
 require_once 'lib/chipin_wordpress_cache.php';  
+require_once 'city_proxy.php';
 
 
 class The_City_Chipin_Widget extends WP_Widget {
@@ -56,187 +58,186 @@ class The_City_Chipin_Widget extends WP_Widget {
 
     ?>
 
+    <span class="city_chipin_widget_admin">
+      <input type="hidden" class="chipin_campus_id_current" value="<?php echo $campus_id; ?>">
+      <input type="hidden" class="chipin_fund_id_current" value="<?php echo $fund_id; ?>">
 
-    <input type="hidden" 
-           id="<?php echo $this->get_field_id('chipin_widget_id'); ?>"  
-           name="<?php echo $this->get_field_name('chipin_widget_id'); ?>" 
-           value="<?php echo $chipin_widget_id; ?>"
-           class="chipin_widget_id">    
+      <input type="hidden" 
+             id="<?php echo $this->get_field_id('chipin_widget_id'); ?>"  
+             name="<?php echo $this->get_field_name('chipin_widget_id'); ?>" 
+             value="<?php echo $chipin_widget_id; ?>"
+             class="chipin_widget_id">    
 
-    <input type="hidden"  
-           id="<?php echo $this->get_field_id('title'); ?>" 
-           name="<?php echo $this->get_field_name('title'); ?>" 
-           value="<?php echo attribute_escape($title) ?>">        
+      <input type="hidden"  
+             id="<?php echo $this->get_field_id('title'); ?>" 
+             name="<?php echo $this->get_field_name('title'); ?>" 
+             value="<?php echo esc_attr($title) ?>">        
 
-    <input type="hidden"  
-           id="<?php echo $this->get_field_id('campus_name'); ?>" 
-           name="<?php echo $this->get_field_name('campus_name'); ?>" 
-           value="<?php echo attribute_escape($campus_name) ?>"
-           class="campus_name">                 
-
-
-   <p>
-     <label for="<?php echo $this->get_field_id('subdomain_key'); ?>">
-       Subdomain: 
-       <input class="widefat" 
-              id="<?php echo $this->get_field_id('subdomain_key'); ?>" 
-              name="<?php echo $this->get_field_name('subdomain_key'); ?>" 
-              type="text" 
-              value="<?php echo attribute_escape($subdomain_key); ?>" />
-      </label>
-      <i>Ex: https://[subdomain].OnTheCity.org</i>
-    </p>
-
-    <p>
-      <label for="<?php echo $this->get_field_id('secret_key'); ?>">
-        City Secret Key: 
-        <input class="widefat" 
-              id="<?php echo $this->get_field_id('secret_key'); ?>" 
-              name="<?php echo $this->get_field_name('secret_key'); ?>" 
-              type="text" 
-              value="<?php echo attribute_escape($secret_key); ?>" 
-              data="secret_key-<?php echo $chipin_widget_id; ?>" />
-      </label>
-    </p>
-
-    <p>
-      <label for="<?php echo $this->get_field_id('user_token'); ?>">
-        City User Token: 
-        <input class="widefat" 
-              id="<?php echo $this->get_field_id('user_token'); ?>" 
-              name="<?php echo $this->get_field_name('user_token'); ?>" 
-              type="text" 
-              value="<?php echo attribute_escape($user_token); ?>" 
-              data="user_token-<?php echo $chipin_widget_id; ?>" />
-      </label>
-    </p>
+      <input type="hidden"  
+             id="<?php echo $this->get_field_id('campus_name'); ?>" 
+             name="<?php echo $this->get_field_name('campus_name'); ?>" 
+             value="<?php echo esc_attr($campus_name) ?>"
+             class="campus_name">                 
 
 
-    <?php 
-      $thecity_large_light = $thecity_large_dark = $thecity_small_light = $thecity_small_dark = '';
-      switch($instance['chipin_display_choice']) {
-        case '1':
-          $thecity_large_light = 'selected="selected"'; 
-          break;
-        case '2':
-          $thecity_large_dark = 'selected="selected"'; 
-          break;
-        case '3':
-          $thecity_small_light = 'selected="selected"'; 
-          break;
-        case '4':
-          $thecity_small_dark = 'selected="selected"'; 
-          break;
-      }
-    ?> 
+     <p>
+       <label for="<?php echo $this->get_field_id('subdomain_key'); ?>">
+         Subdomain: 
+         <input class="widefat" 
+                id="<?php echo $this->get_field_id('subdomain_key'); ?>" 
+                name="<?php echo $this->get_field_name('subdomain_key'); ?>" 
+                type="text" 
+                value="<?php echo esc_attr($subdomain_key); ?>" />
+        </label>
+        <i>Ex: https://[subdomain].OnTheCity.org</i>
+      </p>
 
-    <p>    
-      <label for="<?php echo $this->get_field_id('chipin_display_choice'); ?>">
-        Display:              
-        <select class="widefat" 
-                id="<?php echo $this->get_field_id('chipin_display_choice'); ?>" 
-                name="<?php echo $this->get_field_name('chipin_display_choice'); ?>">
-            <option value="1" <?php echo $thecity_large_light; ?> >TheCity Large / Light</option>
-            <option value="2" <?php echo $thecity_large_dark; ?> >TheCity Large / Dark</option>
-            <option value="3" <?php echo $thecity_small_light; ?> >TheCity Small / Light</option>
-            <option value="4" <?php echo $thecity_small_dark; ?> >TheCity Small / Dark</option>
-        </select>
-      </label>    
-    </p>    
+      <p>
+        <label for="<?php echo $this->get_field_id('secret_key'); ?>">
+          City Secret Key: 
+          <input class="widefat chipin_city_secret_key" 
+                id="<?php echo $this->get_field_id('secret_key'); ?>" 
+                name="<?php echo $this->get_field_name('secret_key'); ?>" 
+                type="text" 
+                value="<?php echo esc_attr($secret_key); ?>" 
+                data="secret_key-<?php echo $chipin_widget_id; ?>" />
+        </label>
+      </p>
 
-    <p>    
-      <label for="<?php echo $this->get_field_id('campus_id'); ?>">
-        Church/Campus:              
-        <select class="widefat" 
-                id="<?php echo $this->get_field_id('campus_id'); ?>" 
-                name="<?php echo $this->get_field_name('campus_id'); ?>"
-                data="city_campuses-<?php echo $chipin_widget_id; ?>"
-                onchange="load_city_fund_options_for_campus_change(jQuery(this))">
-          <option value="0">Enter Key/Token above and save to load</option>
-        </select>
-      </label>    
-      <?php if($load_campus_data) { ?>
-        <script type="text/javascript">
-           load_city_campus_options('<?php echo $chipin_widget_id; ?>', '<?php echo $campus_id; ?>', '<?php echo $fund_id; ?>');
-        </script>
-      <?php } ?>
-    </p>    
+      <p>
+        <label for="<?php echo $this->get_field_id('user_token'); ?>">
+          City User Token: 
+          <input class="widefat chipin_city_user_token" 
+                id="<?php echo $this->get_field_id('user_token'); ?>" 
+                name="<?php echo $this->get_field_name('user_token'); ?>" 
+                type="text" 
+                value="<?php echo esc_attr($user_token); ?>" 
+                data="user_token-<?php echo $chipin_widget_id; ?>" />
+        </label>
+      </p>
 
 
-    <p>    
-      <label for="<?php echo $this->get_field_id('fund_id'); ?>">
-        Fund:              
-        <select class="widefat" 
-                id="<?php echo $this->get_field_id('fund_id'); ?>" 
-                name="<?php echo $this->get_field_name('fund_id'); ?>"
-                data="city_funds-<?php echo $chipin_widget_id; ?>">
-            <option value="0">Select Church/Campus above</option>
-        </select>
-      </label>    
-    </p>        
+      <?php 
+        $thecity_large_light = $thecity_large_dark = $thecity_small_light = $thecity_small_dark = '';
+        switch($instance['chipin_display_choice']) {
+          case '1':
+            $thecity_large_light = 'selected="selected"'; 
+            break;
+          case '2':
+            $thecity_large_dark = 'selected="selected"'; 
+            break;
+          case '3':
+            $thecity_small_light = 'selected="selected"'; 
+            break;
+          case '4':
+            $thecity_small_dark = 'selected="selected"'; 
+            break;
+        }
+      ?> 
+
+      <p>    
+        <label for="<?php echo $this->get_field_id('chipin_display_choice'); ?>">
+          Display:              
+          <select class="widefat" 
+                  id="<?php echo $this->get_field_id('chipin_display_choice'); ?>" 
+                  name="<?php echo $this->get_field_name('chipin_display_choice'); ?>">
+              <option value="1" <?php echo $thecity_large_light; ?> >TheCity Large / Light</option>
+              <option value="2" <?php echo $thecity_large_dark; ?> >TheCity Large / Dark</option>
+              <option value="3" <?php echo $thecity_small_light; ?> >TheCity Small / Light</option>
+              <option value="4" <?php echo $thecity_small_dark; ?> >TheCity Small / Dark</option>
+          </select>
+        </label>    
+      </p>    
+
+      <p>    
+        <label for="<?php echo $this->get_field_id('campus_id'); ?>">
+          Church/Campus:              
+          <select class="widefat chipin_campus_id" 
+                  id="<?php echo $this->get_field_id('campus_id'); ?>" 
+                  name="<?php echo $this->get_field_name('campus_id'); ?>"
+                  onchange="load_city_fund_options_for_campus_change(jQuery(this))">
+            <option value="0">Enter Key/Token above and save to load</option>
+          </select>
+        </label>    
+      </p>    
 
 
-    <p>
-      <label for="<?php echo $this->get_field_id('suggested_amount'); ?>">
-        Suggested Amount (optional): 
-        <input class="widefat" 
-              id="<?php echo $this->get_field_id('suggested_amount'); ?>" 
-              name="<?php echo $this->get_field_name('suggested_amount'); ?>" 
-              type="text" 
-              value="<?php echo attribute_escape($suggested_amount); ?>" />
-      </label>
-      <i>Ex: "25" for "$25"</i>
-    </p>
-
-    <p>
-      <label for="<?php echo $this->get_field_id('designation'); ?>">
-        Designation: 
-        <input class="widefat" 
-              id="<?php echo $this->get_field_id('designation'); ?>" 
-              name="<?php echo $this->get_field_name('designation'); ?>" 
-              type="text" 
-              value="<?php echo attribute_escape($designation); ?>" />
-      </label>
-      <i>Ex: "Chairs", Classrooms", etc.</i>
-    </p>
+      <p>    
+        <label for="<?php echo $this->get_field_id('fund_id'); ?>">
+          Fund:              
+          <select class="widefat chipin_fund_id" 
+                  id="<?php echo $this->get_field_id('fund_id'); ?>" 
+                  name="<?php echo $this->get_field_name('fund_id'); ?>"
+                  data="city_funds-<?php echo $chipin_widget_id; ?>">
+              <option value="0">Select Church/Campus above</option>
+          </select>
+        </label>    
+      </p>        
 
 
-    <p>
-      <label for="<?php echo $this->get_field_id('goal_amount'); ?>">
-        Goal Amount: 
-        <input class="widefat" 
-              id="<?php echo $this->get_field_id('goal_amount'); ?>" 
-              name="<?php echo $this->get_field_name('goal_amount'); ?>" 
-              type="text" 
-              value="<?php echo attribute_escape($goal_amount); ?>" />
-      </label>
-      <i>Ex: "10000" for "$10,000"</i>
-    </p>
+      <p>
+        <label for="<?php echo $this->get_field_id('suggested_amount'); ?>">
+          Suggested Amount (optional): 
+          <input class="widefat" 
+                id="<?php echo $this->get_field_id('suggested_amount'); ?>" 
+                name="<?php echo $this->get_field_name('suggested_amount'); ?>" 
+                type="text" 
+                value="<?php echo esc_attr($suggested_amount); ?>" />
+        </label>
+        <i>Ex: "25" for "$25"</i>
+      </p>
 
-    <p>
-      <label for="<?php echo $this->get_field_id('start_date'); ?>">
-        Start Date: 
-        <input class="widefat" 
-              id="<?php echo $this->get_field_id('start_date'); ?>" 
-              name="<?php echo $this->get_field_name('start_date'); ?>" 
-              type="text" 
-              value="<?php echo attribute_escape($start_date); ?>" />
-      </label>
-      <i>Ex: "2013-03-15"</i>
-    </p>    
+      <p>
+        <label for="<?php echo $this->get_field_id('designation'); ?>">
+          Designation: 
+          <input class="widefat" 
+                id="<?php echo $this->get_field_id('designation'); ?>" 
+                name="<?php echo $this->get_field_name('designation'); ?>" 
+                type="text" 
+                value="<?php echo esc_attr($designation); ?>" />
+        </label>
+        <i>Ex: "Chairs", Classrooms", etc.</i>
+      </p>
 
 
-    <p>
-      <label for="<?php echo $this->get_field_id('end_date'); ?>">
-        End Date (optional): 
-        <input class="widefat" 
-              id="<?php echo $this->get_field_id('end_date'); ?>" 
-              name="<?php echo $this->get_field_name('end_date'); ?>" 
-              type="text" 
-              value="<?php echo attribute_escape($end_date); ?>" />
-      </label>
-      <i>Ex: "2013-09-15"</i>
-    </p>        
+      <p>
+        <label for="<?php echo $this->get_field_id('goal_amount'); ?>">
+          Goal Amount: 
+          <input class="widefat" 
+                id="<?php echo $this->get_field_id('goal_amount'); ?>" 
+                name="<?php echo $this->get_field_name('goal_amount'); ?>" 
+                type="text" 
+                value="<?php echo esc_attr($goal_amount); ?>" />
+        </label>
+        <i>Ex: "10000" for "$10,000"</i>
+      </p>
+
+      <p>
+        <label for="<?php echo $this->get_field_id('start_date'); ?>">
+          Start Date: 
+          <input class="widefat" 
+                id="<?php echo $this->get_field_id('start_date'); ?>" 
+                name="<?php echo $this->get_field_name('start_date'); ?>" 
+                type="text" 
+                value="<?php echo esc_attr($start_date); ?>" />
+        </label>
+        <i>Ex: "2013-03-15"</i>
+      </p>    
+
+
+      <p>
+        <label for="<?php echo $this->get_field_id('end_date'); ?>">
+          End Date (optional): 
+          <input class="widefat" 
+                id="<?php echo $this->get_field_id('end_date'); ?>" 
+                name="<?php echo $this->get_field_name('end_date'); ?>" 
+                type="text" 
+                value="<?php echo esc_attr($end_date); ?>" />
+        </label>
+        <i>Ex: "2013-09-15"</i>
+      </p>        
+
+    </span>
 
     <?php
   }
