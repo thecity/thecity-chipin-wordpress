@@ -31,6 +31,9 @@
 
           jQuery.post(ajaxurl, data, function(response) {       
             var json_data = jQuery.parseJSON( jQuery.trim(response) );
+
+console.log(json_data);
+
             var campus_select_field = jQuery(elem).find(".chipin_campus_id option").remove();
             var list = jQuery(elem).find(".chipin_campus_id");
             list.append(new Option('Select Church/Campus...', '0'));

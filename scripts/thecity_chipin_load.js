@@ -1,30 +1,30 @@
-// function load_city_campus_options(chipin_widget_id, selected_campus_id, selected_fund_id) {
-//   var params = {
-//     "api_key" : jQuery("[data='secret_key-"+chipin_widget_id+"']").val(),
-//     "user_token" : jQuery("[data='user_token-"+chipin_widget_id+"']").val(),
-//     "load" : "campuses",
-//     "campus_id" : selected_campus_id
-//   };  
+function load_city_campus_options(chipin_widget_id, selected_campus_id, selected_fund_id) {
+  var params = {
+    "api_key" : jQuery("[data='secret_key-"+chipin_widget_id+"']").val(),
+    "user_token" : jQuery("[data='user_token-"+chipin_widget_id+"']").val(),
+    "load" : "campuses",
+    "campus_id" : selected_campus_id
+  };  
 
-//   var list = jQuery("[data='city_campuses-"+chipin_widget_id+"']");
-//   jQuery("[data='city_campuses-"+chipin_widget_id+"'] option").remove();
-//   list.append(new Option('Loading ...', '0'));  
+  var list = jQuery("[data='city_campuses-"+chipin_widget_id+"']");
+  jQuery("[data='city_campuses-"+chipin_widget_id+"'] option").remove();
+  list.append(new Option('Loading ...', '0'));  
 
-//   jQuery.post('/wp-content/plugins/the-city-chipin/city_proxy.php', params, function(data) {
-//     var json_data = jQuery.parseJSON(data);
-//     jQuery("[data='city_campuses-"+chipin_widget_id+"'] option").remove();
-//     list.append(new Option('Select Church/Campus...', '0'));
+  jQuery.post('/wp-content/plugins/the-city-chipin/city_proxy.php', params, function(data) {
+    var json_data = jQuery.parseJSON(data);
+    jQuery("[data='city_campuses-"+chipin_widget_id+"'] option").remove();
+    list.append(new Option('Select Church/Campus...', '0'));
 
-//     jQuery.each(json_data["campuses"], function(index, campus) {
-//       list.append(new Option(campus["name"], campus["id"]));
-//     });
-//     list.find("[value='"+selected_campus_id+"']").attr('selected', 'selected');
+    jQuery.each(json_data["campuses"], function(index, campus) {
+      list.append(new Option(campus["name"], campus["id"]));
+    });
+    list.find("[value='"+selected_campus_id+"']").attr('selected', 'selected');
 
-//     if(parseInt(selected_campus_id) > 0) {
-//       load_city_fund_options(chipin_widget_id, selected_campus_id, selected_fund_id);
-//     }
-//   });  
-// }
+    if(parseInt(selected_campus_id) > 0) {
+      load_city_fund_options(chipin_widget_id, selected_campus_id, selected_fund_id);
+    }
+  });  
+}
 
 
 function load_city_fund_options(chipin_widget_id, selected_campus_id, selected_fund_id) {
