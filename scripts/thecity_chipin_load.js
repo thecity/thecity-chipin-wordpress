@@ -1,74 +1,99 @@
-function load_city_campus_options(chipin_widget_id, selected_campus_id, selected_fund_id) {
-  var params = {
-    "api_key" : jQuery("[data='secret_key-"+chipin_widget_id+"']").val(),
-    "user_token" : jQuery("[data='user_token-"+chipin_widget_id+"']").val(),
-    "load" : "campuses",
-    "campus_id" : selected_campus_id
-  };  
+function load_city_chipin_widget_admin(elem) {
+  load_city_campus_options(elem)
+}
 
-  var list = jQuery("[data='city_campuses-"+chipin_widget_id+"']");
-  jQuery("[data='city_campuses-"+chipin_widget_id+"'] option").remove();
-  list.append(new Option('Loading ...', '0'));  
+function load_city_campus_options(elem) {
+  var chipin_widget_id = jQuery(elem).find(".chipin_widget_id").val();
+  if(chipin_widget_id != "") {  
+    var api_key = jQuery(elem).find(".chipin_city_secret_key").val();
+    var user_token = jQuery(elem).find(".chipin_city_user_token").val();
+    var selected_campus_id = jQuery(elem).find(".chipin_campus_id_current").val();
+    selected_campus_id = parseInt(selected_campus_id);
 
-  jQuery.post('/wp-content/plugins/the-city-chipin/city_proxy.php', params, function(data) {
-    var json_data = jQuery.parseJSON(data);
-    jQuery("[data='city_campuses-"+chipin_widget_id+"'] option").remove();
-    list.append(new Option('Select Church/Campus...', '0'));
+    var data = {
+      action: "thecity_process_request",
+      load: "campuses",
+      api_key: api_key,
+      user_token: user_token
+    };
 
-    jQuery.each(json_data["campuses"], function(index, campus) {
-      list.append(new Option(campus["name"], campus["id"]));
-    });
-    list.find("[value='"+selected_campus_id+"']").attr('selected', 'selected');
 
-    if(parseInt(selected_campus_id) > 0) {
-      load_city_fund_options(chipin_widget_id, selected_campus_id, selected_fund_id);
-    }
-  });  
+    jQuery.post(ajaxurl, data, function(response) {       
+      var json_data = jQuery.parseJSON( jQuery.trim(response) );
+
+      jQuery(elem).find(".chipin_campus_id option").remove();
+      
+      var list = jQuery(elem).find(".chipin_campus_id");
+      list.append(new Option('Select Church/Campus...', '0'));
+
+      jQuery.each(json_data["campuses"], function(index2, campus) {
+        list.append(new Option(campus["name"], campus["id"]));
+      });
+
+      if(selected_campus_id > 0) {
+        list.find("[value='"+selected_campus_id+"']").attr('selected', 'selected');        
+        load_city_fund_options(elem, selected_campus_id);
+      }            
+    });      
+  } 
 }
 
 
-function load_city_fund_options(chipin_widget_id, selected_campus_id, selected_fund_id) {
-  var params = {
-    "api_key" : jQuery("[data='secret_key-"+chipin_widget_id+"']").val(),
-    "user_token" : jQuery("[data='user_token-"+chipin_widget_id+"']").val(),
-    "load" : "funds",
-    "campus_id" : selected_campus_id
-  };
 
-  var list = jQuery("[data='city_funds-"+chipin_widget_id+"']");
-  jQuery("[data='city_funds-"+chipin_widget_id+"'] option").remove();
-  list.append(new Option('Loading ...', '0'));
+function load_city_fund_options(elem, selected_campus_id) {
+  var chipin_widget_id = jQuery(elem).find(".chipin_widget_id").val();
+  if(chipin_widget_id != "") {  
+    var api_key = jQuery(elem).find(".chipin_city_secret_key").val();
+    var user_token = jQuery(elem).find(".chipin_city_user_token").val();
+    var selected_fund_id = jQuery(elem).find(".chipin_fund_id_current").val();
+    selected_fund_id = parseInt(selected_fund_id);
 
-  jQuery.post('/wp-content/plugins/the-city-chipin/city_proxy.php', params, function(data) {
-    var json_data = jQuery.parseJSON(data);
-    jQuery("[data='city_funds-"+chipin_widget_id+"'] option").remove();
+    var data = {
+      action: "thecity_process_request",
+      load: "funds",
+      api_key: api_key,
+      user_token: user_token,
+      campus_id: selected_campus_id,
+    };  
 
-    jQuery.each(json_data["funds"], function(index, fund) {
-      list.append(new Option(fund["name"], fund["id"]));
-    });    
-    list.find("[value='"+selected_fund_id+"']").attr('selected', 'selected');
+    jQuery(elem).find(".chipin_fund_id option").remove();
+    var list = jQuery(elem).find(".chipin_fund_id");
+    list.append(new Option('Loading ...', '0'));
 
-    if(list.find('option').size() == 0) {
-      list.append(new Option('NO FUNDS FOUND!!', '0'));
-    }
-  });  
+    jQuery.post(ajaxurl, data, function(response) {    
+      var json_data = jQuery.parseJSON( jQuery.trim(response) );
+      jQuery(elem).find(".chipin_fund_id option").remove();
+
+      jQuery.each(json_data["funds"], function(index, fund) {
+        list.append(new Option(fund["name"], fund["id"]));
+      });    
+      list.find("[value='"+selected_fund_id+"']").attr('selected', 'selected');
+
+      if(list.find('option').size() == 0) {
+        list.append(new Option('NO FUNDS FOUND!!', '0'));
+      }
+    });  
+  }
 }
+
+
 
 function load_city_fund_options_for_campus_change(elem) {
-  var chipin_widget_id = jQuery(elem).parents('.widget-content').find('.chipin_widget_id').val();
-  var campus_name_field = jQuery(elem).parents('.widget-content').find('.campus_name');
-  var selected_campus_id = jQuery(elem).val();
+  var chipin_widget_id = jQuery(elem).parents('.city_chipin_widget_admin').find('.chipin_widget_id').val();
+  var campus_name_field = jQuery(elem).parents('.city_chipin_widget_admin').find('.campus_name');
+  var selected_campus_id = jQuery(elem).parents('.city_chipin_widget_admin').find(".chipin_campus_id").val();
   if(parseInt(selected_campus_id) > 0) {
     campus_name_field.val( jQuery(elem).find("option:selected").text() );
-    load_city_fund_options(chipin_widget_id, selected_campus_id, 0);
+    var admin_elem = jQuery(jQuery(elem).parents('.city_chipin_widget_admin'));
+    load_city_fund_options(admin_elem, selected_campus_id);
   } else {
     reset_city_funds_list(chipin_widget_id);
   }
 }
 
-function reset_city_funds_list(chipin_widget_id) {
-  var list = jQuery("[data='city_funds-"+chipin_widget_id+"']");
-  jQuery("[data='city_funds-"+chipin_widget_id+"'] option").remove();
+function reset_city_funds_list(elem) {
+  jQuery(elem).find(".chipin_fund_id option").remove();
+  var list = jQuery(elem).parents('.widget-content').find(".chipin_fund_id")
   list.append(new Option('Enter Key/Token above and save to load', '0'));  
 }
 

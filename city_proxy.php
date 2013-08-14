@@ -4,52 +4,17 @@
 
   add_action('admin_footer', 'thecity_process_request_javascript' );
   add_action('wp_ajax_thecity_process_request', 'thecity_process_request_callback');
+  //add_action('wp_ajax_thecity_process_funds_request', 'thecity_process_funds_request_callback');  
 ?>
 
 
 <?php function thecity_process_request_javascript() { ?>
   <script type="text/javascript" >
-    jQuery(document).ready(function($) {
-       jQuery.each(jQuery(".city_chipin_widget_admin"), function(index, elem) { 
-        var chipin_widget_id = jQuery(elem).find(".chipin_widget_id").val();
-        if(chipin_widget_id != "") {  
-          var api_key = jQuery(elem).find(".chipin_city_secret_key").val();
-          var user_token = jQuery(elem).find(".chipin_city_user_token").val();
-          var selected_campus_id = jQuery(elem).find(".chipin_campus_id_current").val();
-          var selected_fund_id = jQuery(elem).find(".chipin_fund_id_current").val();
-          //load_city_campus_options(chipin_widget_id, campus_id, fund_id);
-
-          var data = {
-            action: "thecity_process_request",
-            load: "campuses",
-            api_key: api_key,
-            user_token: user_token,
-            chipin_widget_id: chipin_widget_id,
-            campus_id: selected_campus_id, 
-            fund_id: selected_fund_id
-          };
-
-          jQuery.post(ajaxurl, data, function(response) {       
-            var json_data = jQuery.parseJSON( jQuery.trim(response) );
-
-console.log(json_data);
-
-            var campus_select_field = jQuery(elem).find(".chipin_campus_id option").remove();
-            var list = jQuery(elem).find(".chipin_campus_id");
-            list.append(new Option('Select Church/Campus...', '0'));
-
-            jQuery.each(json_data["campuses"], function(index, campus) {
-              list.append(new Option(campus["name"], campus["id"]));
-            });
-            list.find("[value='"+selected_campus_id+"']").attr('selected', 'selected');
-
-            // if(parseInt(selected_campus_id) > 0) {
-            //   load_city_fund_options(chipin_widget_id, selected_campus_id, selected_fund_id);
-            // }            
-          });      
-        } 
-      });
-    });
+    // jQuery(document).ready(function($) {
+    //   jQuery.each(jQuery(".city_chipin_widget_admin"), function(index, elem) { 
+    //     //load_city_campus_options(elem);
+    //   });
+    // });
   </script>
 <?php } ?>
 

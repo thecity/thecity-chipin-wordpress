@@ -27,16 +27,20 @@ define("THE_CITY_CHIPIN_CACHE_TABLE_OPTION_KEY", 'the_city_chipin_key');
     // The database table used to cache the data.
     private $table_name;
     
+    // The subdomain to load and store the data for.
+    private $subdomain;
+
     
     /**
      *  Constructor.
      * 
      * @param WordPressDBConnection conn The wordpress database connection
      */
-    public function __construct($conn) {
+    public function __construct($conn, $subdomain) {
       $this->db_conn = $conn;
       $this->table_name = $conn->prefix . 'thecity_chipin_json_cache';
       $this->create_the_city_cache_table_unless_exists();
+      $this->subdomain = $subdomain;     
     }
     
 

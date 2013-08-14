@@ -26,8 +26,20 @@ class The_City_Chipin_Widget extends WP_Widget {
   function form($instance) {
     /* Set up some default widget settings. */
     $defaults = array(
+      'chipin_widget_id' => '',
       'subdomain_key' => '',
-      'chipin_display_choice' => '3'
+      'chipin_display_choice' => '3',
+      'secret_key' => '',
+      'user_token' => '',
+      'campus_id' => '',
+      'campus_name' => '',
+      'fund_id' => '',
+      'suggested_amount' => '',
+      'goal_amount' => '',
+      'goal_amount' => '',
+      'designation' => '',
+      'start_date' => '',
+      'end_date' => ''
     );
 
     $instance = wp_parse_args( (array) $instance, $defaults );    
@@ -56,9 +68,11 @@ class The_City_Chipin_Widget extends WP_Widget {
     $chipin_widget_id = strip_tags($instance['chipin_widget_id']);
     if(empty($chipin_widget_id) && !empty($user_token)) { $chipin_widget_id = intval(microtime(true)); }    
 
+
+    $ccwa_id = uniqid();
     ?>
 
-    <span class="city_chipin_widget_admin">
+    <span id="city_chipin_widget_admin-<?php echo $ccwa_id; ?>" class="city_chipin_widget_admin">
       <input type="hidden" class="chipin_campus_id_current" value="<?php echo $campus_id; ?>">
       <input type="hidden" class="chipin_fund_id_current" value="<?php echo $fund_id; ?>">
 
@@ -237,6 +251,9 @@ class The_City_Chipin_Widget extends WP_Widget {
         <i>Ex: "2013-09-15"</i>
       </p>        
 
+      <script type="text/javascript">
+        load_city_chipin_widget_admin(jQuery("#city_chipin_widget_admin-<?php echo $ccwa_id; ?>"))
+      </script>
     </span>
 
     <?php
@@ -265,7 +282,7 @@ class The_City_Chipin_Widget extends WP_Widget {
 
 
     global $wpdb;
-    $cacher = new ChipinWordPressCache($wpdb);
+    $cacher = new ChipinWordPressCache($wpdb, $instance['subdomain_key']);
     $cacher->expire_cache($instance['chipin_widget_id']);
     $data = array(
       'subdomain_key'    => $instance['subdomain_key'],
