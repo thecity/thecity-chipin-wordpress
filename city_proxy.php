@@ -2,22 +2,8 @@
   require_once 'lib/chipin/lib/the_city_chipin.php';
   require_once 'lib/chipin_wordpress_cache.php';  
 
-  add_action('admin_footer', 'thecity_process_request_javascript' );
   add_action('wp_ajax_thecity_process_request', 'thecity_process_request_callback');
-  //add_action('wp_ajax_thecity_process_funds_request', 'thecity_process_funds_request_callback');  
 ?>
-
-
-<?php function thecity_process_request_javascript() { ?>
-  <script type="text/javascript" >
-    // jQuery(document).ready(function($) {
-    //   jQuery.each(jQuery(".city_chipin_widget_admin"), function(index, elem) { 
-    //     //load_city_campus_options(elem);
-    //   });
-    // });
-  </script>
-<?php } ?>
-
 
 
 <?php
