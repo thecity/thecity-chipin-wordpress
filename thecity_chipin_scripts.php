@@ -1,6 +1,9 @@
 <?php
 
-function thecity_chipin_wordpress_scripts() {    
+function thecity_chipin_wordpress_scripts() {  
+  wp_enqueue_script('thecity_ajax_js', plugins_url('/scripts/thecity_localize_functions.js', __FILE__));  
+  wp_localize_script('thecity_ajax_js', 'tcAjax', array( 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) );
+
   wp_enqueue_script( array('jquery') );  
   wp_enqueue_script('thecity_chipin_load_js', plugins_url('/scripts/thecity_chipin_load.js', __FILE__));  
 }
@@ -22,4 +25,6 @@ function thecity_chipin_wordpress_admin_scripts($hook) {
 }
 add_action('admin_enqueue_scripts', 'thecity_chipin_wordpress_admin_scripts');
 
+
 ?>
+

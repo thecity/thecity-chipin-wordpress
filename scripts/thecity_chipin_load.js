@@ -2,6 +2,7 @@ function load_city_chipin_widget_admin(elem) {
   load_city_campus_options(elem)
 }
 
+
 function load_city_campus_options(elem) {
   var chipin_widget_id = jQuery(elem).find(".chipin_widget_id").val();
   if(chipin_widget_id != "") {  
@@ -91,6 +92,7 @@ function load_city_fund_options_for_campus_change(elem) {
   }
 }
 
+
 function reset_city_funds_list(elem) {
   jQuery(elem).find(".chipin_fund_id option").remove();
   var list = jQuery(elem).parents('.widget-content').find(".chipin_fund_id")
@@ -99,19 +101,25 @@ function reset_city_funds_list(elem) {
 
 
 function load_info_for_widget(chipin_widget_id) {
-  var params = {
-    "load" : "info",
-    "chipin_widget_id" : chipin_widget_id
+  var data = {
+    action: "thecity_process_request",
+    load: "info",
+    chipin_widget_id: chipin_widget_id
   };
 
-  jQuery.post('/wp-content/plugins/the-city-chipin/city_proxy.php', params, function(data) {    
-    var json_data = jQuery.parseJSON(data);
-    var designation = json_data["widget_info"]["designation"].toLowerCase();
-    var total_amount_cents = json_data["totals"].hasOwnProperty(designation) ? json_data["totals"][designation] : 0;
-    render_city_chipin_widget(chipin_widget_id, total_amount_cents, json_data["widget_info"]); 
-    calculate_percentage_raised();  
+  jQuery.post(tcAjax.ajaxurl, data, function(response) {   
+    var json_data = jQuery.parseJSON( jQuery.trim(response) );
+    if(jQuery.isEmptyObject(json_data)) {
+      render_city_chipin_widget_no_data(chipin_widget_id);
+    } else {
+      var designation = json_data["widget_info"]["designation"].toLowerCase();
+      var total_amount_cents = json_data["totals"].hasOwnProperty(designation) ? json_data["totals"][designation] : 0;
+      render_city_chipin_widget(chipin_widget_id, total_amount_cents, json_data["widget_info"]); 
+      calculate_percentage_raised();  
+    }
   });   
 }
+
 
 function calculate_percentage_raised() {
   goal = parseInt(jQuery("#campaign-goal").text(), 10);
@@ -121,12 +129,17 @@ function calculate_percentage_raised() {
   jQuery("#campaign-progress-bar").css("width", percent_raised + "%")
 }
 
+
 function convert_date_format(old_date) {
   var d = old_date.split('-');
   if(d.length != 3) return '';
   return [d[1],'/',d[2],'/',d[0]].join('');
 }
 
+
+function render_city_chipin_widget_no_data(chipin_widget_id) {
+  jQuery("#city_chipin_widget-"+chipin_widget_id).html('Chipin: No Data Found');  
+}
 
 
 function render_city_chipin_widget(chipin_widget_id, total_amount_cents, widget_info) {

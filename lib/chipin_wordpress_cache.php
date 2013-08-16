@@ -27,8 +27,8 @@ define("THE_CITY_CHIPIN_CACHE_TABLE_OPTION_KEY", 'the_city_chipin_key');
     // The database table used to cache the data.
     private $table_name;
     
-    // The subdomain to load and store the data for.
-    private $subdomain;
+    // The prefix key for the cache
+    private $key_prefix;
 
     
     /**
@@ -36,11 +36,11 @@ define("THE_CITY_CHIPIN_CACHE_TABLE_OPTION_KEY", 'the_city_chipin_key');
      * 
      * @param WordPressDBConnection conn The wordpress database connection
      */
-    public function __construct($conn, $subdomain) {
+    public function __construct($conn) {
       $this->db_conn = $conn;
       $this->table_name = $conn->prefix . 'thecity_chipin_json_cache';
       $this->create_the_city_cache_table_unless_exists();
-      $this->subdomain = $subdomain;     
+      $this->key_prefix = 'thecity_chipin';     
     }
     
 
@@ -100,11 +100,11 @@ define("THE_CITY_CHIPIN_CACHE_TABLE_OPTION_KEY", 'the_city_chipin_key');
      * @return mixed Returns true on success or a string error message on false.
      */
     public function save_data($key, $data, $expire_in = null) {
-      $this->expire_cache($this->subdomain.'::'.$key);
+      $this->expire_cache($this->key_prefix.'::'.$key);
       if( is_null($expire_in) ) { $expire_in = 3600; } # 3600 seconds = 1 hour
       $expire_in += time();
       $t = date("Y-m-d H:i:s", $expire_in);
-      $this->db_conn->insert($this->table_name, array('cache_key' => $this->subdomain.'::'.$key, 'cache_value' => serialize($data), 'cache_expire_at' => $t));
+      $this->db_conn->insert($this->table_name, array('cache_key' => $this->key_prefix.'::'.$key, 'cache_value' => serialize($data), 'cache_expire_at' => $t));
       return true;      
     } 
     
@@ -119,9 +119,9 @@ define("THE_CITY_CHIPIN_CACHE_TABLE_OPTION_KEY", 'the_city_chipin_key');
      */
     public function get_data($key) {         
       $t = date("Y-m-d H:i:s", time());
-      $result = $this->db_conn->get_results('SELECT cache_value FROM '.$this->table_name.' WHERE cache_key = "'.$this->subdomain.'::'.$key.'" AND cache_expire_at >= "'.$t.'"LIMIT 1');
+      $result = $this->db_conn->get_results('SELECT cache_value FROM '.$this->table_name.' WHERE cache_key = "'.$this->key_prefix.'::'.$key.'" AND cache_expire_at >= "'.$t.'"LIMIT 1');
       if( empty($result) ) { 
-        $this->expire_cache($this->subdomain.'::'.$key); // Just make sure
+        $this->expire_cache($this->key_prefix.'::'.$key); // Just make sure
         return null; 
       }
       return unserialize($result[0]->cache_value);
@@ -136,7 +136,7 @@ define("THE_CITY_CHIPIN_CACHE_TABLE_OPTION_KEY", 'the_city_chipin_key');
      * @throws Exception if unable to remove cache file.
      */
     public function expire_cache($key) {
-      $this->db_conn->get_results('DELETE FROM '.$this->table_name.' WHERE cache_key = "'.$this->subdomain.'::'.$key.'"');
+      $this->db_conn->get_results('DELETE FROM '.$this->table_name.' WHERE cache_key = "'.$this->key_prefix.'::'.$key.'"');
     }
     
     
@@ -149,7 +149,7 @@ define("THE_CITY_CHIPIN_CACHE_TABLE_OPTION_KEY", 'the_city_chipin_key');
      */
     public function is_cache_expired($key) {
       $t = date("Y-m-d H:i:s", time());
-      $result = $this->db_conn->get_results('SELECT id FROM '.$this->table_name.' WHERE cache_key = "'.$this->subdomain.'::'.$key.'" AND cache_expire_at >= "'.$t.'"LIMIT 1');
+      $result = $this->db_conn->get_results('SELECT id FROM '.$this->table_name.' WHERE cache_key = "'.$this->key_prefix.'::'.$key.'" AND cache_expire_at >= "'.$t.'"LIMIT 1');
       return empty($result);  
     }
     

@@ -31,7 +31,7 @@
         $chipin_widget_id = isset($_POST['chipin_widget_id']) ? $_POST['chipin_widget_id'] : ''; 
         global $wpdb;
         $cacher = new ChipinWordPressCache($wpdb);
-        $data = $cacher->get_data($chipin_widget_id);
+        $data = $cacher->get_data($chipin_widget_id);    
         if(!is_null($data)) {
           $white_list = empty($data['designation']) ? array() : array($data['designation']);
           $chipin = new TheCityChipin($data['secret_key'], $data['user_token'], $data['campus_id'], $data['fund_id'], $data['start_date'], $data['end_date']);
