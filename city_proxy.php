@@ -3,10 +3,8 @@
   require_once 'lib/chipin_wordpress_cache.php';  
 
   add_action('wp_ajax_thecity_process_request', 'thecity_process_request_callback');
-?>
 
 
-<?php
   function thecity_process_request_callback() {
     $api_key = isset($_POST['api_key']) ? $_POST['api_key'] : '';
     $user_token = isset($_POST['user_token']) ? $_POST['user_token'] : '';
