@@ -8,12 +8,15 @@ License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 A WordPress plugin that allows users to create campaign giving assigned to a registry item using The City.  
-The widgets created will automatically update as the funds settle.
+The widgets created will automatically update as the funds settle.  
+Donations can be segmented for a campaign registry based on the memo field.
 
 == Description ==
 
 A WordPress plugin that allows users to create campaign giving assigned to a registry item using The City.  
-The widgets created will automatically update as the funds settle.
+The widgets created will automatically update as the funds settle.  
+Donations can be segmented for a campaign registry based on the memo field.
+
 
 == Installation ==
 
